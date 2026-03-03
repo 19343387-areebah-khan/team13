@@ -1,0 +1,210 @@
+/*
+   Bit by Bit Main Stylesheet
+   Author: Areebah
+   Sprint 1: Registration & Login UI
+*/
+
+/*google fonts*/
+@import url('https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap');
+
+/* colour */
+:root {
+  --bg-color: #F5F0E8;
+  --white: #FFFFFF;
+  --border-color: #E5D9C8;
+  --border-active: #D97757;
+  --accent: #D97757;
+  --accent-dark: #C85A3A;
+  --text-dark: #2D1B0E;
+  --text-medium: #8B6B4A;
+  --text-placeholder: #9CA3AF;
+  --error: #FF4D4D;
+  --success: #10B981;
+  --shadow: rgba(217, 119, 87, 0.15);
+}
+
+/* reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--bg-color);
+  font-family: 'Jost', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* container */
+.auth-container {
+  width: 100%;
+  max-width: 390px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 30px;
+}
+
+/* logo*/
+.logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #D97757, #C85A3A);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 15px var(--shadow);
+}
+
+.logo-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: white;
+  stroke-width: 2.5;
+  fill: none;
+}
+
+.app-title {
+  font-family: 'Bitter', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: 2px;
+  text-transform: none;
+}
+
+.app-subtitle {
+  font-size: 13px;
+  color: var(--text-medium);
+  margin-top: 6px;
+}
+
+/* form */
+.auth-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-field {
+  display: flex;
+  align-items: center;
+  background-color: var(--white);
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0 16px;
+  height: 52px;
+  transition: border-color 0.2s ease;
+}
+
+.input-field:focus-within {
+  border-color: var(--border-active);
+  box-shadow: 0 0 0 3px var(--shadow);
+}
+
+.input-field.error {
+  border-color: var(--error);
+}
+
+.input-field svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--text-medium);
+  fill: none;
+  stroke-width: 2;
+  margin-right: 10px;
+}
+
+.input-field input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+.input-field input::placeholder {
+  color: var(--text-placeholder);
+}
+
+/* error messages */
+.error-message {
+  font-size: 11px;
+  color: var(--error);
+  padding-left: 4px;
+  display: none;
+}
+
+.error-message.visible {
+  display: block;
+}
+
+/* button */
+.btn-primary {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(135deg, #D97757, #C85A3A);
+  color: white;
+
+
+  border: none;
+  border-radius: 26px;
+  font-family: 'Jost', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: 0 4px 15px var(--shadow);
+  transition: opacity 0.2s ease;
+}
+
+.btn-primary:hover { opacity: 0.92; }
+
+/* bottom link */
+.auth-link {
+  font-size: 13px;
+  color: var(--text-medium);
+  text-align: center;
+  margin-top: 16px;
+}
+
+.auth-link a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* attempts warning*/
+.attempts-warning {
+  font-size: 12px;
+  color: var(--error);
+  text-align: center;
+  padding: 10px;
+  background: rgba(255, 77, 77, 0.08);
+  border-radius: 8px;
+  display: none;
+}
+
+.attempts-warning.visible { display: block; }

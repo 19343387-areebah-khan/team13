@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bit by Bit - Login</title>
+  <!-- Same stylesheet as register page -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="auth-container">
+
+    <!-- logo -->
+    <div class="logo-wrapper">
+      <!-- checkmark icon in circle -->
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <!-- App name -->
+      <h1 class="app-title">Bit by Bit</h1>
+      <!-- Subtitle -->
+      <p class="app-subtitle">Small Steps. Big Changes.</p>
+    </div>
+
+    <!-- login form -->
+    <form class="auth-form" id="loginForm">
+
+      <!-- Email Field -->
+      <div class="input-group">
+        <div class="input-field" id="emailField">
+          <!-- Email icon -->
+          <svg viewBox="0 0 24 24">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 
+            2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+            </path>
+            <polyline points="22,6 12,12 2,6"></polyline>
+          </svg>
+          <input 
+            type="email" 
+            id="email" 
+            placeholder="Email"
+            autocomplete="email"
+          >
+        </div>
+        <!-- Error shown if email invalid -->
+        <span class="error-message" id="emailError">
+          Invalid email address
+        </span>
+      </div>
+
+      <!-- Username Field -->
+      <div class="input-group">
+        <div class="input-field" id="usernameField">
+          <!-- User icon -->
+          <svg viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 
+            0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <input 
+            type="text" 
+            id="username" 
+            placeholder="Username"
+            autocomplete="username"
+          >
+        </div>
+        <!-- Error shown if username not found -->
+        <span class="error-message" id="usernameError">
+          Username not found
+        </span>
+      </div>
+
+      <!-- Password Field -->
+      <div class="input-group">
+        <div class="input-field" id="passwordField">
+          <!-- Lock icon -->
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" 
+            rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <input 
+            type="password" 
+            id="password" 
+            placeholder="Password"
+            autocomplete="current-password"
+          >
+        </div>
+        <!-- Error shown if password incorrect -->
+        <span class="error-message" id="passwordError">
+          Incorrect password
+        </span>
+      </div>
+
+      <!-- Too many attempts warning -->
+      <div class="attempts-warning" id="attemptsWarning">
+        Too many failed attempts. Please try again later.
+      </div>
+
+      <!-- Login Button -->
+      <button 
+        type="button" 
+        class="btn-primary" 
+        onclick="handleLoginSubmit()">
+        Login
+      </button>
+
+    </form>
+
+    <!-- Bottom link to register page -->
+    <p class="auth-link">
+      Don't have an account? 
+      <a href="register.html">Register</a>
+    </p>
+
+  </div>
+
+  <!-- Link to login JavaScript file -->
+  <script src="js/login.js"></script>
+
+</body>
+</html>
