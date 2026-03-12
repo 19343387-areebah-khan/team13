@@ -77,6 +77,23 @@ function validateRegisterForm(email, username, password, confirmPassword) {
     showFieldError('passwordField', 'passwordError', 'Password is required');
     isValid = false;
   }
+  //Hamza Auth.py added
+  if (password) {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (password.length < 8 || !hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecial) {
+      showFieldError(
+        'passwordField',
+        'passwordError',
+        'Password must be at least 8 characters and include uppercase, lowercase, number, and special character'
+      );
+      isValid = false;
+    }
+    
+  }
 
   // Check passwords match
   if (password !== confirmPassword) {
