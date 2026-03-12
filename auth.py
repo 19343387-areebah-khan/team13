@@ -62,3 +62,40 @@ def incrementFailedAttempts(user):
 def resetFailedAttempts(user):
     user["failed_attempts"] = 0
     return user["failed_attempts"]
+
+
+# ==========================================
+# LOGIN FUNCTION
+# Main backend login logic for frontend
+# ==========================================
+
+def loginUser(loginData, user) :
+    errors = {}
+
+    email = loginData.get("email", "").strip()
+    password = loginData.get("password", "")
+    username = loginData.get("username", "").strip()   
+
+    if checkLoginAttempts(user):
+        errors["account"] = "Account locked due to too many failed login attempts. Please try again later."
+        return False, errors
+    
+    if email != user.get("email", ""):
+        errors["email"] = "Email not found."
+
+    if username != user.get("username", ""):
+        errors["username"] = "Username not found."
+
+    if errors:
+        incrementFailedAttempts(user)
+        return False, errors
+
+    if not comparePassword(password, user.get("password_hash", "")):
+        errors["password"] = "Incorrect password."
+        incrementFailedAttempts(user)
+        if checkLoginAttempts(user):
+            errors["account"] = "Account locked due to too many failed login attempts. Please try again later."
+        return False, errors  
+
+    resetFailedAttempts(user)
+    return True, {"message": "Login successful."} 
