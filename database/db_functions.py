@@ -53,34 +53,32 @@ def reset_failed_attempts(user_id):
     conn.commit()
     conn.close()
 
-'''
-def add_user(username, email, password_hash=None):
+def update_user_field(user_id: int, field_name: str, new_value):
+    """
+    Update a single field for a user in the database.
+    
+    Args:
+        user_id (int): The ID of the user to update.
+        field_name (str): The field to update ('password_hash', 'email', 'username', etc.)
+        new_value (any): The new value for the field.
+    
+    Returns:
+        bool: True if the update succeeded, False otherwise.
+    """
+    # Whitelist fields that are allowed to be updated to prevent SQL injection
+    allowed_fields = {"password_hash", "email", "username"}
+    if field_name not in allowed_fields:
+        raise ValueError(f"Cannot update field '{field_name}'. Allowed fields: {allowed_fields}")
+    
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
-                   (username, email, password_hash))
-    conn.commit()
-    conn.close()
-
-def delete_user(user_id):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM users WHERE user_id=?", (user_id,))
-    conn.commit()
-    conn.close()
-
-def get_user_by_email(email):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE email=?", (email,))
-    result = cursor.fetchone()
-    conn.close()
-    return result
-
-def update_user_email(user_id, new_email):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE users SET email=? WHERE user_id=?", (new_email, user_id))
-    conn.commit()
-    conn.close()
-    '''
+    try:
+        query = f"UPDATE users SET {field_name} = ? WHERE user_id = ?"
+        cursor.execute(query, (new_value, user_id))
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error updating user: {e}")
+        return False
+    finally:
+        conn.close()
