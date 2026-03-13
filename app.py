@@ -1,7 +1,3 @@
-from services.auth_service import register_user, login_user
-
-
-
 ##def handle_register_submit():
 ##def handle_login_submit():
 ##def showLoginErrors(errors)
@@ -10,7 +6,63 @@ from services.auth_service import register_user, login_user
 from database.db_functions import get_user_by_email, get_user_by_username, update_failed_attempts, reset_failed_attempts
 from database.db_connections import get_connection
 
+from flask import Flask, request, jsonify, send_from_directory
+from services.auth_service import register_user, login_user
+from flask_cors import CORS  # <-- import CORS
 
+
+app = Flask(__name__, static_folder="frontend", static_url_path="")
+CORS(app)  # <-- enable CORS for all routes
+
+# --------------------------------------
+# Serve HTML files from the frontend folder
+# --------------------------------------
+@app.route('/<path:filename>')
+def serve_file(filename):
+    return send_from_directory(app.static_folder, filename)
+
+@app.route('/')
+def index():
+    return send_from_directory(app.static_folder, "login.html")
+
+# --------------------------------------
+# API endpoints for login and register
+# --------------------------------------
+@app.route('/login', methods=['POST'])
+def api_login():
+    data = request.get_json()
+    result = login_user(data)
+    return jsonify(result)
+
+@app.route('/register', methods=['POST'])
+def api_register():
+    data = request.get_json()
+    result = register_user(data)
+    return jsonify(result)
+
+# --------------------------------------
+# Run the app
+# --------------------------------------
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+previous test
 def show_users():
     conn = get_connection()
     cursor = conn.cursor()
@@ -96,81 +148,7 @@ def menu():
 
 
 if __name__ == "__main__":
-    menu()
-
-'''
-# --- Test Registration ---
-data = {
-    "username": "TestUser",
-    "email": "testuser@example.com",
-    "password": "Password123!"
-}
-
-result = register_user(data)
-print("Register Result:", result)
-
-# --- Test Login ---
-login_data = {
-    "email": "testuser@example.com",
-    "password": "Password123!"
-}
-
-login_result = login_user(login_data)
-print("Login Result:", login_result)
-
-# --- Test Wrong Password ---
-wrong_login = {
-    "email": "testuser@example.com",
-    "password": "WrongPass1!"
-}
-
-wrong_result = login_user(wrong_login)
-print("Wrong Login Result:", wrong_result)
-
-
-'''
-
-
-
-
-
-
-
-'''
-
-
-##-----------------------------------------
-# Example usage
-def handle_register_submit():
-    data = {
-        'username': input("Username: "),
-        'email': input("Email: "),
-        'password': input("Password: ")
-    }
-    success, message = register_user(data)
-    print(message)
-
-def handle_login_submit():
-    data = {
-        'email': input("Email: "),
-        'password': input("Password: ")
-    }
-    success, message = login_user(data)
-    print(message)
-
-if __name__ == "__main__":
-    while True:
-        choice = input("1=Register, 2=Login, 0=Exit: ")
-        if choice == "1":
-            handle_register_submit()
-        elif choice == "2":
-            handle_login_submit()
-        else:
-            break
-'''
-
-
-
+    menu() '''
 
 
 

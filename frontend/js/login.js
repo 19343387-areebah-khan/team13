@@ -113,34 +113,68 @@ function validateLoginForm(email, username, password) {
 
 // MAIN LOGIN FUNCTION
 // Entry point called when user clicks the login button
+// function handleLoginSubmit() {
+
+//   // Get values from all input fields
+//   const email = document.getElementById('email').value.trim();
+//   const username = document.getElementById('username').value.trim();
+//   const password = document.getElementById('password').value;
+
+//   // Run frontend validation first
+//   const isValid = validateLoginForm(email, username, password);
+
+//   // If frontend validation fails, stop here
+//   if (!isValid) return;
+
+//   // if valid, send to backend 
+//   // NOTE: loginUser() is Hamza's backend function
+//   // pass the data as an object
+//   const loginData = {
+//     email: email,
+//     username: username,
+//     password: password
+//   };
+
+
 function handleLoginSubmit() {
 
-  // Get values from all input fields
+  // 1. Get values from input fields
   const email = document.getElementById('email').value.trim();
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
 
-  // Run frontend validation first
+  // 2. Run frontend validation
   const isValid = validateLoginForm(email, username, password);
+  if (!isValid) return; // stop if invalid
 
-  // If frontend validation fails, stop here
-  if (!isValid) return;
+  // 3. Create object to send to backend
+  const loginData = { email, username, password };
 
-  // if valid, send to backend 
-  // NOTE: loginUser() is Hamza's backend function
-  // pass the data as an object
-  const loginData = {
-    email: email,
-    username: username,
-    password: password
-  };
+  // 4. Call Flask backend
+  fetch('http://localhost:5000/login', {  // make sure Flask has @app.route("/login")
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(loginData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // 5a. Success → go to home page
+      window.location.href = 'home.html'; // adjust to actual home page
+    } else {
+      // 5b. Failure → show errors under fields
+      showLoginErrors({ email: data.error, username: data.error, password: data.error });
+    }
+  })
+  .catch(error => console.error('Error connecting to backend:', error));
+}
+
 
   // TODO: Connect to Hamza's loginUser(loginData) function
   // For now we log to confirm frontend is working
-  console.log('Login data ready to send:', loginData);
+  //console.log('Login data ready to send:', loginData);
 
   // Temporary success redirect until backend is connected
   // replace with Hamza's loginUser() response
-  alert('Login successful! Redirecting to home...');
-  window.location.href = 'register.html';
-}
+  //alert('Login successful! Redirecting to home...');
+  //window.location.href = 'register.html';
