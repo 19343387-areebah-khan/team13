@@ -208,3 +208,43 @@ body {
 }
 
 .attempts-warning.visible { display: block; }
+
+/* Home page styling (Sprint 1) */
+
+#habit-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+
+}
+
+#habit-list li {
+    background-color: #f2f2f2;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+#add-habit {
+    margin-top: 15px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Mobile friendly layout */
+@media (max-width: 600px) {
+
+    body {
+        padding: 10px;
+    }
+
+    #habit-list li {
+        font-size: 16px;
+    }
+
+    #add-habit {
+        width: 100px;
+    }
+
+}
