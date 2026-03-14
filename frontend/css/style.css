@@ -248,3 +248,40 @@ body {
     }
 
 }
+
+/* Account page styling */
+
+#account-form {
+    max-width: 400px;
+    margin: 30px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#account-form div {
+    display: flex;
+    flex-direction: column;
+}
+
+#account-form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#account-form input {
+    padding: 8px;
+    font-size: 14px;
+}
+
+#account-form button {
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#success-message {
+    text-align: center;
+    margin-top: 15px;
+    color: green;
+}
