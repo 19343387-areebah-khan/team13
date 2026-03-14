@@ -137,51 +137,21 @@ function handelRegisterSubmit() {
       alert('Account created successfully!');
       window.location.href = 'login.html';
     } else {
-      // 5b. Failure → show errors under fields
-      showRegisterErrors({ email: result.error, username: result.error, password: result.error });
+      // 5b. Failure → show error under the correct field only
+      // Backend sends one error string e.g. "Username already taken"
+      // so we check the message and route it to the right field
+      const err = result.error.toLowerCase();
+      if (err.includes('email')) {
+        showFieldError('emailField', 'emailError', result.error);
+      } else if (err.includes('username')) {
+        showFieldError('usernameField', 'usernameError', result.error);
+      } else if (err.includes('password')) {
+        showFieldError('passwordField', 'passwordError', result.error);
+      } else {
+        // fallback for any other error
+        showFieldError('emailField', 'emailError', result.error);
+      }
     }
   })
   .catch(err => console.error('Register fetch error:', err));
 }
-
-
-
-
-// function handelRegisterSubmit() {
-
-//   // Get values from all input fields
-//   const email = document.getElementById('email').value.trim();
-//   const username = document.getElementById('username').value.trim();
-//   const password = document.getElementById('password').value;
-//   const confirmPassword = document.getElementById('confirmPassword').value;
-
-//   // Run frontend validation first
-//   const isValid = validateRegisterForm(
-//     email, 
-//     username, 
-//     password, 
-//     confirmPassword
-//   );
-
-//   // If frontend validation fails, stop here
-//   if (!isValid) return;
-
-//   // if valid, send to backend 
-//   // NOTE: registerUser() is Benjy's backend function
-//   // pass the data as an object
-//   const userData = {
-//     email: email,
-//     username: username,
-//     password: password
-//   };
-
-  
-// }
-  // TODO: Connect to Benjy's registerUser(userData) function
-  // For now we log to confirm frontend is working
-  //console.log('Registration data ready to send:', userData);
-
-  // Temporary success redirect until backend is connected
-  // This will be replaced by Benjy's registerUser() response
- // alert('Account created successfully! Redirecting to home...');
- // window.location.href = 'login.html';
