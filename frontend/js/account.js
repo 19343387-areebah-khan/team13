@@ -30,7 +30,7 @@ function loadUserDetails() {
     }
 }
 
-accountForm.addEventListener("sumbit", function(event) {
+accountForm.addEventListener("submit", function(event) {
     event.preventDefault();
 
     const currentUser = getCurrentUser();
