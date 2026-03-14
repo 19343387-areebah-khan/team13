@@ -40,6 +40,25 @@ accountForm.addEventListener("submit", function(event) {
         return;
     }
 
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (name === "" || email === "" || password === "") {
+        alert("All fields must be filled in.");
+        return;
+    }
+
+    if (!email.includes("@")) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters.");
+        return;
+    }
+    
     const updatedUser = {
         ...currentUser,
         name: nameInput.value,
