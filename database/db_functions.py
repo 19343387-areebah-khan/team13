@@ -158,8 +158,8 @@ def log_habit_completion(user_id, habit_id, completed=True):
             )
     else:
         cursor.execute("INSERT INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)",
-            (habit_id, today, status, "")
-            )
+    (habit_id, today, status)
+    )
     conn.commit()
     conn.close()
     return True
