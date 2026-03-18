@@ -94,34 +94,41 @@ def api_create_habit():
 def api_get_habits():
     user_id = request.args.get("user_id")
 
-    # validate: user_id must exist
     if not user_id:
         return jsonify({"success": False, "error": "User ID is required"})
 
-    # fetch habits from database
-    # TODO: REPLACE WITH STIPAN's get_habits_by_user(user_id) from db_functions.py (T6.7)
     try:
-        from database.db_connections import get_connection
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT habit_id, name, habit_type, created_at FROM habits WHERE user_id = ?",
-            (user_id,)
-        )
-        rows = cursor.fetchall()
-        conn.close()
-
-        # convert database rows to list of dictionaries
-        habits = []
-        for row in rows:
-            habits.append({
-                "habit_id": row["habit_id"],
-                "name": row["name"],
-                "habit_type": row["habit_type"],
-                "created_at": row["created_at"]
-            })
-
+        from database.db_functions import get_habits_by_user_id
+        habits = get_habits_by_user_id(user_id)
         return jsonify({"success": True, "habits": habits})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+# T10.3: POST /habits/complete — log habit completion (Hamza)
+# Receives: { user_id, habit_id, completed } from frontend
+# Returns: { success: True } or { success: False, error: "..." }
+@app.route('/habits/complete', methods=['POST'])
+def api_complete_habit():
+    data = request.get_json()
+
+    user_id = data.get("user_id")
+    habit_id = data.get("habit_id")
+    completed = data.get("completed")
+
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required"})
+    if not habit_id:
+        return jsonify({"success": False, "error": "Habit ID is required"})
+    if completed is None:
+        return jsonify({"success": False, "error": "Completed status is required"})
+
+    try:
+        from database.db_functions import log_habit_completion
+        result = log_habit_completion(int(user_id), int(habit_id), completed)
+        if result:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False, "error": "Habit not found or does not belong to user"})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
