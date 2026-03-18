@@ -1,23 +1,304 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Home - Bit by Bit</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bit by Bit – Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;700&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Jost', sans-serif;
+      background: #F5F0E8;
+      margin: 0;
+      padding: 0;
+    }
+
+    
+
+    .container {
+      max-width: 700px;
+      margin: 10px auto 40px auto;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);;
+    }
+    
+    
+    /* logo*/
+.logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #D97757, #C85A3A);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 15px var(--shadow);
+}
+
+.logo-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: white;
+  stroke-width: 2.5;
+  fill: none;
+}
+
+.app-title {
+  font-family: 'Bitter', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #2B160B;
+  letter-spacing: 0;
+  margin: 10px 0 6px 0;
+  line-height: 1.1;
+}
+
+.app-subtitle {
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #8A5A3C;
+  margin: 0;
+}
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .form-row {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      background: #D97757;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #C85A3A;
+    }
+
+    .habit-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-top: 10px;
+      background: #fafafa;
+    }
+
+    .habit-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .habit-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #999;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+    }
+
+    .habit-check.done {
+      background: green;
+      border-color: green;
+      color: white;
+    }
+
+    .completed .habit-name {
+      text-decoration: line-through;
+      color: #666;
+    }
+
+    .habit-type {
+      font-size: 12px;
+      color: #666;
+    }
+
+    #toast {
+      margin-top: 16px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
 </head>
-
 <body>
+  <!-- logo -->
+    <div class="logo-wrapper">
+      <!-- checkmark icon in circle -->
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <!-- App name -->
+      <h1 class="app-title">Bit by Bit</h1>
+      <!-- Subtitle -->
+      <p class="app-subtitle">Small Steps. Big Changes.</p>
+    </div>
 
-<h1>My Habits</h1>
+  <div class="container">
+    <h1>My Habits</h1>
 
-<p id="empty-message" style="display:none;">
-You have no habits yet.
-</p>
+    <form id="habit-form">
+      <div class="form-row">
+        <label for="habit-name">Habit name</label>
+        <input type="text" id="habit-name" placeholder="e.g. Drink water" required>
+      </div>
 
-<ul id="habit-list"></ul>
+      <div class="form-row">
+        <label for="habit-type">Category</label>
+        <select id="habit-type">
+          <option value="health">Health</option>
+          <option value="fitness">Fitness</option>
+          <option value="mindfulness">Mindfulness</option>
+          <option value="learning">Learning</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
 
-<button id="add-habit">Add Habit</button>
+      <button type="submit">Add Habit</button>
+    </form>
 
-<script src="./js/home.js"></script>
+    <div id="toast"></div>
 
+    <h2 style="margin-top: 30px;">Today's Habits</h2>
+    <div id="habit-list"></div>
+  </div>
+
+  <script>
+    const USER_ID = sessionStorage.getItem("user_id") || localStorage.getItem("user_id") || 1;
+
+    async function loadHabits() {
+      const res = await fetch(`/habits?user_id=${USER_ID}`);
+      const data = await res.json();
+
+      const list = document.getElementById("habit-list");
+      list.innerHTML = "";
+
+      if (!data.success || !data.habits.length) {
+        list.innerHTML = "<p>You have no habits yet.</p>";
+        return;
+      }
+
+      data.habits.forEach(habit => {
+        const item = document.createElement("div");
+        item.className = "habit-item" + (habit.completed_today ? " completed" : "");
+        item.id = `habit-${habit.habit_id}`;
+
+        item.innerHTML = `
+          <div class="habit-left">
+            <div class="habit-check ${habit.completed_today ? 'done' : ''}" onclick="toggleComplete(${habit.habit_id}, this)">
+              ${habit.completed_today ? "✓" : ""}
+            </div>
+            <div>
+              <div class="habit-name">${habit.name}</div>
+              <div class="habit-type">${habit.habit_type}</div>
+            </div>
+          </div>
+        `;
+
+        list.appendChild(item);
+      });
+    }
+
+    async function toggleComplete(habitId, el) {
+      const item = document.getElementById(`habit-${habitId}`);
+      const alreadyDone = el.classList.contains("done");
+
+      el.classList.toggle("done", !alreadyDone);
+      el.textContent = !alreadyDone ? "✓" : "";
+      item.classList.toggle("completed", !alreadyDone);
+
+      const res = await fetch("/habits/complete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_id: USER_ID,
+          habit_id: habitId,
+          completed: !alreadyDone
+        })
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        el.classList.toggle("done", alreadyDone);
+        el.textContent = alreadyDone ? "✓" : "";
+        item.classList.toggle("completed", alreadyDone);
+        alert("Could not update habit");
+      }
+    }
+
+    document.getElementById("habit-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("habit-name").value.trim();
+      const habit_type = document.getElementById("habit-type").value;
+
+      const res = await fetch("/habits", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_id: USER_ID,
+          name,
+          habit_type
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById("habit-name").value = "";
+        document.getElementById("toast").textContent = "Habit added successfully";
+        loadHabits();
+      } else {
+        document.getElementById("toast").textContent = data.error || "Failed to add habit";
+      }
+    });
+
+    loadHabits();
+  </script>
 </body>
 </html>
