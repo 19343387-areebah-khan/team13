@@ -40,6 +40,91 @@ def api_register():
     result = register_user(data)
     return jsonify(result)
 
+
+# API endpoints for habits Sprint 2 (Areebah)
+
+
+# T6.5: POST /habits create a new habit
+# Receives: { user_id, name, habit_type } from frontend
+# Returns: { success: True } or { success: False, error: "..." }
+@app.route('/habits', methods=['POST'])
+def api_create_habit():
+    data = request.get_json()
+
+    # get the fields from the request
+    user_id = data.get("user_id")
+    name = data.get("name", "").strip()
+    habit_type = data.get("habit_type", "").strip()
+
+    # validate: user_id must exist
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required"})
+
+    # validate: habit name cannot be empty
+    if not name:
+        return jsonify({"success": False, "error": "Habit name is required"})
+
+    # validate: habit type cannot be empty
+    if not habit_type:
+        return jsonify({"success": False, "error": "Habit type is required"})
+
+    # save to database
+    # TODO: REPLACE W STIPAN add_habit(user_id, name, habit_type) from db_functions.py (T6.7)
+    # i only did this so i can test my tasks 
+    try:
+        from database.db_connections import get_connection
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO habits (user_id, name, habit_type) VALUES (?, ?, ?)",
+            (user_id, name, habit_type)
+        )
+        conn.commit()
+        habit_id = cursor.lastrowid
+        conn.close()
+        return jsonify({"success": True, "habit_id": habit_id})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
+# T6.6: GET /habits — get all habits for a user
+# Receives: user_id as a query parameter e.g. /habits?user_id=1
+# Returns: { success: True, habits: [...] }
+@app.route('/habits', methods=['GET'])
+def api_get_habits():
+    user_id = request.args.get("user_id")
+
+    # validate: user_id must exist
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required"})
+
+    # fetch habits from database
+    # TODO: REPLACE WITH STIPAN's get_habits_by_user(user_id) from db_functions.py (T6.7)
+    try:
+        from database.db_connections import get_connection
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT habit_id, name, habit_type, created_at FROM habits WHERE user_id = ?",
+            (user_id,)
+        )
+        rows = cursor.fetchall()
+        conn.close()
+
+        # convert database rows to list of dictionaries
+        habits = []
+        for row in rows:
+            habits.append({
+                "habit_id": row["habit_id"],
+                "name": row["name"],
+                "habit_type": row["habit_type"],
+                "created_at": row["created_at"]
+            })
+
+        return jsonify({"success": True, "habits": habits})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
 # --------------------------------------
 # Run the app
 # --------------------------------------
