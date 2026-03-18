@@ -82,3 +82,84 @@ def update_user_field(user_id: int, field_name: str, new_value):
         return False
     finally:
         conn.close()
+
+
+
+#===============================================
+                #HAMZA FUNCTIONS
+#===============================================
+
+
+def add_habit(user_id, name, habyt_type="other"):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO habits (user_id, name, habit_type) VALUES (?, ?, ?)",
+        (user_id, name, habyt_type)
+    )
+    conn.commit()
+    habit_id = cursor.lastrowid
+    conn.close()
+    return habit_id
+
+def get_habits_by_user_id(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            h.habit_id,
+            h.name,
+            h.habit_type,
+            CASE
+                WHEN hl.log_id IS NOT NULL AND hl.status = 'complete' THEN 1
+                ELSE 0
+            END AS completed_today
+        FROM habits h
+        LEFT JOIN habit_logs hl
+            ON h.habit_id = hl.habit_id
+            AND hl.date = DATE('now')
+            AND hl.status = 'complete'
+        WHERE h.user_id = ?
+        ORDER BY h.created_at DESC, h.habit_id DESC
+        """,
+        (user_id,)
+    )
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return [dict(row) for row in rows]
+
+def log_habit_completion(user_id, habit_id, completed=True):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT habit_id FROM habits WHERE habit_id = ? AND user_id = ?",
+        (habit_id, user_id)
+        )
+    habit = cursor.fetchone()
+    if not habit:
+        conn.close()
+        return False
+    
+    today = __import__('datetime').date.today().isoformat()
+    status = 'complete' if completed else 'incomplete'
+
+    #checking if the log already exists for today
+    cursor.execute("SELECT log_id FROM habit_logs WHERE habit_id = ? AND date = ?",
+        (habit_id, today)
+        )
+    existing = cursor.fetchone()
+    if existing:
+        cursor.execute("UPDATE habit_logs SET status = ? WHERE log_id = ?",
+            (status, existing['log_id'])
+            )
+    else:
+        cursor.execute("INSERT INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)",
+            (habit_id, today, status, "")
+            )
+    conn.commit()
+    conn.close()
+    return True
