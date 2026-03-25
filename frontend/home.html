@@ -207,9 +207,11 @@
     <div id="habit-list"></div>
   </div>
 
+  //script import 
+
   <script>
     const USER_ID = sessionStorage.getItem("user_id") || localStorage.getItem("user_id") || 1;
-
+//replace 215-246
     async function loadHabits() {
       const res = await fetch(`/habits?user_id=${USER_ID}`);
       const data = await res.json();
@@ -263,6 +265,8 @@
         })
       });
 
+
+      
       const data = await res.json();
 
       if (!data.success) {
@@ -279,6 +283,7 @@
       const name = document.getElementById("habit-name").value.trim();
       const habit_type = document.getElementById("habit-type").value;
 
+//287-310 call createHabit() instead 
       const res = await fetch("/habits", {
         method: "POST",
         headers: {
@@ -302,7 +307,7 @@
       }
     });
 
-    loadHabits();
+    loadHabits(); //change ro loadHabits adn render
   </script>
 </body>
 </html>
