@@ -29,3 +29,33 @@ Security functions integrated: sanitize_input, validate_password, hash_password,
 Testing:
 Registration, login, wrong password, duplicate username/email tested.
 Backend returns structured messages; UI field-specific error display still generic.
+
+Sprint 2 Notes - April 6, 2026
+Habit Deletion
+Implemented delete_habit function in db_functions.py to remove habits from the database.
+Function checks for the existence of a habit before deleting it to prevent errors.
+Connected this function to a Flask API endpoint: DELETE /habits/<habit_id>.
+Frontend (habits.js) updated to call this endpoint, display a confirmation popup, and re-render the habit list after deletion.
+Ensures that habit deletion works both visually in the UI and in the database.
+
+User Profile Updates
+Added update_user function to safely update a user’s username, email, or password.
+Checks added to prevent duplicate usernames or emails.
+Password hashing implemented for security.
+Connected to an update_profile API endpoint in app.py.
+Allows users to edit their profile without conflicts or errors.
+
+Home Page Frontend Cleanup
+Old functions loadHabits and toggleComplete replaced with renderHabits and createHabit in habits.js.
+Script placement in home.html corrected; initialization code wrapped in DOMContentLoaded listener.
+Navigation bar added linking Home, Account, and Login pages.
+Ensures habits display correctly on page load and resolves previous broken script issues.
+
+UI Styling Adjustments
+.habit-type font size and color standardized for readability.
+#toast messages updated for consistency and visual clarity.
+Logo, app title, and container preserved from original design to maintain layout and branding.
+Integration of External Module
+Benji’s habit management module was standalone and not directly integrated.
+Adjustments made to merge functionality, ensuring habit creation, deletion, and rendering work without conflicts.
+The system now handles both the core backend logic and the externally provided module in a consistent way.

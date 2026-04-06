@@ -162,8 +162,14 @@
     }
   </style> -->
 </head>
-
 <body>
+  <!-- Navigation bar -->
+  <nav style="display:flex; gap:20px; padding:10px; background:#F5F0E8;">
+    <a href="home.html">Home</a>
+    <a href="account.html">Account</a>
+    <a href="login.html">Login</a>
+  </nav>
+  
   <!-- logo -->
     <div class="logo-wrapper">
       <!-- checkmark icon in circle -->
@@ -207,107 +213,35 @@
     <div id="habit-list"></div>
   </div>
 
-  //script import 
+ <!-- Import the habits.js script -->
+<script src="js/habits.js"></script>
 
-  <script>
-    const USER_ID = sessionStorage.getItem("user_id") || localStorage.getItem("user_id") || 1;
-//replace 215-246
-    async function loadHabits() {
-      const res = await fetch(`/habits?user_id=${USER_ID}`);
-      const data = await res.json();
+<!-- Initialize rendering and form submission -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Render all habits on page load
+    renderHabits();
 
-      const list = document.getElementById("habit-list");
-      list.innerHTML = "";
-
-      if (!data.success || !data.habits.length) {
-        list.innerHTML = "<p>You have no habits yet.</p>";
-        return;
-      }
-
-      data.habits.forEach(habit => {
-        const item = document.createElement("div");
-        item.className = "habit-item" + (habit.completed_today ? " completed" : "");
-        item.id = `habit-${habit.habit_id}`;
-
-        item.innerHTML = `
-          <div class="habit-left">
-            <div class="habit-check ${habit.completed_today ? 'done' : ''}" onclick="toggleComplete(${habit.habit_id}, this)">
-              ${habit.completed_today ? "✓" : ""}
-            </div>
-            <div>
-              <div class="habit-name">${habit.name}</div>
-              <div class="habit-type">${habit.habit_type}</div>
-            </div>
-          </div>
-        `;
-
-        list.appendChild(item);
-      });
-    }
-
-    async function toggleComplete(habitId, el) {
-      const item = document.getElementById(`habit-${habitId}`);
-      const alreadyDone = el.classList.contains("done");
-
-      el.classList.toggle("done", !alreadyDone);
-      el.textContent = !alreadyDone ? "✓" : "";
-      item.classList.toggle("completed", !alreadyDone);
-
-      const res = await fetch("/habits/complete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          user_id: USER_ID,
-          habit_id: habitId,
-          completed: !alreadyDone
-        })
-      });
-
-
-      
-      const data = await res.json();
-
-      if (!data.success) {
-        el.classList.toggle("done", alreadyDone);
-        el.textContent = alreadyDone ? "✓" : "";
-        item.classList.toggle("completed", alreadyDone);
-        alert("Could not update habit");
-      }
-    }
-
-    document.getElementById("habit-form").addEventListener("submit", async function(e) {
+    // Hook up form submission
+    const habitForm = document.getElementById("habit-form");
+    habitForm.addEventListener("submit", async function(e) {
       e.preventDefault();
 
       const name = document.getElementById("habit-name").value.trim();
-      const habit_type = document.getElementById("habit-type").value;
+      const habitType = document.getElementById("habit-type").value;
 
-//287-310 call createHabit() instead 
-      const res = await fetch("/habits", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          user_id: USER_ID,
-          name,
-          habit_type
-        })
-      });
+      if (!name) return;
 
-      const data = await res.json();
-
-      if (data.success) {
+      const result = await createHabit(name, habitType);
+      if (result.success) {
         document.getElementById("habit-name").value = "";
         document.getElementById("toast").textContent = "Habit added successfully";
-        loadHabits();
+        renderHabits();
       } else {
-        document.getElementById("toast").textContent = data.error || "Failed to add habit";
+        document.getElementById("toast").textContent = result.error || "Failed to add habit";
       }
     });
-
-    loadHabits(); //change ro loadHabits adn render
-  </script>
+  });
+</script>
 </body>
 </html>

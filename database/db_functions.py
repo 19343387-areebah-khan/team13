@@ -84,12 +84,6 @@ def update_user_field(user_id: int, field_name: str, new_value):
         conn.close()
 
 
-
-#===============================================
-                #HAMZA FUNCTIONS
-#===============================================
-
-
 def add_habit(user_id, name, habyt_type="other"):
     conn = get_connection()
     cursor = conn.cursor()
@@ -163,3 +157,71 @@ def log_habit_completion(user_id, habit_id, completed=True):
     conn.commit()
     conn.close()
     return True
+
+def delete_habit(habit_id: int):
+    """
+    Deletes a habit from the database by its ID.
+    Returns True if deleted, False if habit not found.
+    """
+    conn = get_connection()  # make sure you have a connection function
+    cur = conn.cursor()
+    
+    # Check if habit exists
+    cur.execute("SELECT * FROM habits WHERE habit_id = %s", (habit_id,))
+    habit = cur.fetchone()
+    if not habit:
+        conn.close()
+        return False
+
+    # Delete habit
+    cur.execute("DELETE FROM habits WHERE habit_id = %s", (habit_id,))
+    conn.commit()
+    conn.close()
+    return True
+
+def update_user(user_id: int, username=None, email=None, password=None):
+    """
+    Update a user's info in the database.
+    Only updates the fields provided.
+    Returns True if success, False if user not found or duplicate email/username.
+    """
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    # Check for duplicate username/email if provided
+    if username:
+        cur.execute("SELECT user_id FROM users WHERE username=%s AND user_id != %s", (username, user_id))
+        if cur.fetchone():
+            conn.close()
+            return {"success": False, "error": "Username already exists"}
+
+    if email:
+        cur.execute("SELECT user_id FROM users WHERE email=%s AND user_id != %s", (email, user_id))
+        if cur.fetchone():
+            conn.close()
+            return {"success": False, "error": "Email already exists"}
+
+    # Build update query dynamically
+    fields = []
+    values = []
+    if username: 
+        fields.append("username=%s")
+        values.append(username)
+    if email: 
+        fields.append("email=%s")
+        values.append(email)
+    if password:  # hash before storing!
+        from werkzeug.security import generate_password_hash
+        fields.append("password=%s")
+        values.append(generate_password_hash(password))
+    
+    if not fields:
+        conn.close()
+        return {"success": False, "error": "No fields to update"}
+
+    values.append(user_id)
+    query = f"UPDATE users SET {', '.join(fields)} WHERE user_id=%s"
+    cur.execute(query, tuple(values))
+    conn.commit()
+    conn.close()
+    return {"success": True}
