@@ -102,6 +102,7 @@ def add_habit(user_id, name, habyt_type="other"):
     conn.close()
     return habit_id
 
+#areebah sprint 3 updated function for habit logging with status and note
 def get_habits_by_user_id(user_id):
     conn = get_connection()
     cursor = conn.cursor()
@@ -115,12 +116,12 @@ def get_habits_by_user_id(user_id):
             CASE
                 WHEN hl.log_id IS NOT NULL AND hl.status = 'complete' THEN 1
                 ELSE 0
-            END AS completed_today
+            END AS completed_today,
+            hl.status AS today_status
         FROM habits h
         LEFT JOIN habit_logs hl
             ON h.habit_id = hl.habit_id
             AND hl.date = DATE('now')
-            AND hl.status = 'complete'
         WHERE h.user_id = ?
         ORDER BY h.created_at DESC, h.habit_id DESC
         """,
@@ -144,8 +145,11 @@ def log_habit_completion(user_id, habit_id, completed=True):
         conn.close()
         return False
     
+    
     today = __import__('datetime').date.today().isoformat()
     status = 'complete' if completed else 'incomplete'
+
+
 
     #checking if the log already exists for today
     cursor.execute("SELECT log_id FROM habit_logs WHERE habit_id = ? AND date = ?",
@@ -160,6 +164,51 @@ def log_habit_completion(user_id, habit_id, completed=True):
         cursor.execute("INSERT INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)",
     (habit_id, today, status)
     )
+    conn.commit()
+    conn.close()
+    return True
+
+# T18.7 - Sprint 3 (Areebah)
+# 
+def log_habit_status(user_id, habit_id, status, note):
+    """
+    T18.7: Logs or updates the completion status and optional note for a habit today.
+    Upserts into habit_logs - updates if a log exists for today, inserts if not.
+    Valid status values: 'good', 'partial', 'not_complete'
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # verify habit belongs to user
+    cursor.execute(
+        "SELECT habit_id FROM habits WHERE habit_id = ? AND user_id = ?",
+        (habit_id, user_id)
+    )
+    habit = cursor.fetchone()
+    if not habit:
+        conn.close()
+        return False
+
+    today = __import__('datetime').date.today().isoformat()
+
+    # check if log already exists for today
+    cursor.execute(
+        "SELECT log_id FROM habit_logs WHERE habit_id = ? AND date = ?",
+        (habit_id, today)
+    )
+    existing = cursor.fetchone()
+
+    if existing:
+        cursor.execute(
+            "UPDATE habit_logs SET status = ?, note = ? WHERE log_id = ?",
+            (status, note, existing['log_id'])
+        )
+    else:
+        cursor.execute(
+            "INSERT INTO habit_logs (habit_id, date, status, note) VALUES (?, ?, ?, ?)",
+            (habit_id, today, status, note)
+        )
+
     conn.commit()
     conn.close()
     return True

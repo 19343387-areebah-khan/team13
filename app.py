@@ -132,6 +132,38 @@ def api_complete_habit():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
+# T18.6: POST /habits/status  log habit completion status and note (Areebah)
+# Receives: { user_id, habit_id, status, note } from frontend
+# Returns: { success: True } or { success: False, error: "..." }
+@app.route('/habits/status', methods=['POST'])
+def api_habit_status():
+    data = request.get_json()
+
+    user_id = data.get("user_id")
+    habit_id = data.get("habit_id")
+    status = data.get("status", "").strip()
+    note = data.get("note", "").strip()
+
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required"})
+    if not habit_id:
+        return jsonify({"success": False, "error": "Habit ID is required"})
+
+    # validate status is one of the three allowed values
+    valid_statuses = ["good", "partial", "not_complete"]
+    if status not in valid_statuses:
+        return jsonify({"success": False, "error": "Invalid status value"})
+
+    try:
+        from database.db_functions import log_habit_status
+        result = log_habit_status(int(user_id), int(habit_id), status, note)
+        if result:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False, "error": "Habit not found or does not belong to user"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
 # --------------------------------------
 # Run the app
 # --------------------------------------
