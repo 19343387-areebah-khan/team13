@@ -164,6 +164,30 @@ def api_habit_status():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
+
+@app.route("/habits", methods=["DELETE"])
+def api_delete_habit():
+    data = request.get_json()
+    user_id = data.get("user_id")
+    habit_id = data.get("habit_id")
+
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required"})
+        
+    try:
+        from database.db_functions import delete_habit
+        result = delete_habit(int(user_id), int(habit_id))
+
+        if result:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False, "error": "Habit not found"})
+        
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
+
 # --------------------------------------
 # Run the app
 # --------------------------------------
