@@ -312,6 +312,10 @@ async function loadHabits() {
           <div class="habit-type">${habit.habit_type}</div>
         </div>
       </div>
+      <button onclick="deleteHabit(${habit.habit_id})"
+          style="background:#e74c3c; color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer;">
+      Delete
+      </button>
     `;
 
     list.appendChild(item);
@@ -430,6 +434,30 @@ document.getElementById("habit-form").addEventListener("submit", async function(
     document.getElementById("toast").textContent = data.error || "Failed to add habit";
   }
 });
+
+function deleteHabit(habit_id) {
+  fetch("/habits", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      user_id: USER_ID,
+      habit_id: habit_id
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      console.log("Habit deleted");
+      loadHabits();
+    } else {
+      console.error(data.error);
+    }
+  })
+  .catch(err => console.error("Error deleting habit:", err));
+}
+
 
 loadHabits();
 
