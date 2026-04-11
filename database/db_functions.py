@@ -212,3 +212,22 @@ def log_habit_status(user_id, habit_id, status, note):
     conn.commit()
     conn.close()
     return True
+
+
+
+
+
+def delete_habit(user_id, habit_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM habits WHERE habit_id = ? AND user_id = ?",
+        (habit_id, user_id)
+    )
+
+    conn.commit()
+    rows_deleted = cursor.rowcount
+    conn.close()
+
+    return rows_deleted > 0
