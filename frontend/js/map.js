@@ -5,7 +5,22 @@ const logoutBtn = document.getElementById("logoutBtn");
 const currentYear = new Date().getFullYear();
 
 function getStoredUserId() {
-  return localStorage.getItem("user_id") || sessionStorage.getItem("user_id");
+  const localUserId = localStorage.getItem("user_id");
+  const sessionUserId = sessionStorage.getItem("user_id");
+
+  console.log("localStorage user_id:", localUserId);
+  console.log("sessionStorage user_id:", sessionUserId);
+  console.log("current page:", window.location.href);
+
+  if (localUserId && localUserId !== "undefined" && localUserId !== "null") {
+    return localUserId;
+  }
+
+  if (sessionUserId && sessionUserId !== "undefined" && sessionUserId !== "null") {
+    return sessionUserId;
+  }
+
+  return null;
 }
 
 function formatDateLocal(date) {
@@ -17,7 +32,7 @@ function formatDateLocal(date) {
 
 function getStartMonday(date) {
   const d = new Date(date);
-  const day = d.getDay(); // Sun=0, Mon=1...
+  const day = d.getDay();
   const diff = day === 0 ? -6 : 1 - day;
   d.setDate(d.getDate() + diff);
   d.setHours(0, 0, 0, 0);
@@ -35,9 +50,17 @@ function getEndSunday(date) {
 
 function buildDateRatioMap(apiData) {
   const map = {};
+
+  if (!Array.isArray(apiData)) {
+    return map;
+  }
+
   apiData.forEach(item => {
-    map[item.date] = item.ratio;
+    if (item.date) {
+      map[item.date] = item.ratio;
+    }
   });
+
   return map;
 }
 
@@ -59,9 +82,8 @@ function renderMonthLabels(gridStart, gridEnd) {
   const current = new Date(gridStart);
 
   while (current <= gridEnd) {
-    const sundayBased = new Date(current);
-    const labelMonth = sundayBased.getMonth();
-    const labelYear = sundayBased.getFullYear();
+    const labelMonth = current.getMonth();
+    const labelYear = current.getFullYear();
 
     if (labelYear === currentYear && !placedMonths.has(labelMonth)) {
       const label = document.createElement("span");
@@ -128,13 +150,14 @@ async function loadHeatmap() {
 
   if (!userId) {
     alert("No logged-in user found. Please log in again.");
-    window.location.href = "login.html";
     return;
   }
 
   try {
-    const response = await fetch(`/heatmap?user_id=${userId}`);
+    const response = await fetch(`/heatmap?user_id=${encodeURIComponent(userId)}`);
     const data = await response.json();
+
+    console.log("Heatmap API data:", data);
 
     if (!response.ok) {
       throw new Error(data.error || "Failed to load heatmap data");
