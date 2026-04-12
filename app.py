@@ -3,7 +3,7 @@
 ##def showLoginErrors(errors)
 ##def showRegisterErrors(errors)
 from services.auth_service import register_user, login_user
-from database.db_functions import get_user_by_email, get_user_by_username, update_failed_attempts, reset_failed_attempts
+from database.db_functions import get_user_by_email, get_user_by_username, update_failed_attempts, reset_failed_attempts, get_heatmap_data
 from database.db_connections import get_connection
 
 from flask import Flask, request, jsonify, send_from_directory
@@ -188,13 +188,26 @@ def api_delete_habit():
 
 
 
+
+
+@app.route('/heatmap', methods=['GET'])
+def api_get_heatmap():
+    user_id = request.args.get("user_id")
+
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required"}), 400
+
+    try:
+        heatmap_data = get_heatmap_data(int(user_id))
+        return jsonify(heatmap_data), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    
 # --------------------------------------
 # Run the app
 # --------------------------------------
 if __name__ == "__main__":
     app.run(debug=True)
-
-
 
 
 
