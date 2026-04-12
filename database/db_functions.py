@@ -237,42 +237,50 @@ def delete_habit(user_id, habit_id):
 
 
 #===============================================
-                    #HEATMAP    
+                    #HEATMAP-Hamza
 #===============================================
 
-def get_habit_heatmap_data(user_id):
+def get_heatmap_data(user_id):
     conn = get_connection()
     cursor = conn.cursor()
 
-    #total habits for this user
-    cursor.execute("SELECT COUNT(*) AS total FROM habits WHERE user_id = ?", (user_id,))
+    cursor.execute(
+        "SELECT COUNT(*) AS total_habits FROM habits WHERE user_id = ?",
+        (user_id,)
+    )
     total_row = cursor.fetchone()
-    total_habits = total_row['total_habits'] if total_row else 0
+    total_habits = total_row["total_habits"] if total_row else 0
+
     if total_habits == 0:
         conn.close()
-        return {}
-    
+        return []
+
     cursor.execute("""
-        SELECT
-            hl.date,
-            COUNT(*) AS completed_count
+        SELECT date(hl.date) AS log_date, COUNT(*) AS completed_count
         FROM habit_logs hl
         INNER JOIN habits h ON hl.habit_id = h.habit_id
         WHERE h.user_id = ?
           AND hl.status IN ('complete', 'good', 'partial')
-        GROUP BY hl.date
-        ORDER BY hl.date ASC
+        GROUP BY date(hl.date)
+        ORDER BY date(hl.date) ASC
     """, (user_id,))
+
     rows = cursor.fetchall()
     conn.close()
-    heatmap_data = {}
+
+    heatmap_data = []
+
     for row in rows:
-        ratio = row['completed_count'] / total_habits
-        ratio = max(0.0, min(1.0, float(ratio)))
+        ratio = row["completed_count"] / total_habits
+
+        if ratio < 0:
+            ratio = 0
+        if ratio > 1:
+            ratio = 1
 
         heatmap_data.append({
-            "date": row['date'],
+            "date": row["log_date"],
             "ratio": ratio
         })
-        return heatmap_data
->>>>>>> 0588194 (Add heatmap data function)
+
+    return heatmap_data
