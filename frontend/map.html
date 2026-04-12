@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bit by Bit - Heatmap</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-left">
+      <a href="home.html">Home</a>
+      <a href="account.html">Account</a>
+      <a href="map.html" class="active">Heatmap</a>
+    </div>
+    <button id="logoutBtn" class="logout-btn">Log Out</button>
+  </nav>
+
+  <main class="heatmap-page">
+    <section class="heatmap-header">
+      <h1>Year Activity Map</h1>
+      <p>Track your habit consistency across the year.</p>
+    </section>
+
+    <section class="heatmap-card">
+      <div id="monthLabels" class="month-labels"></div>
+
+      <div class="heatmap-wrapper">
+        <div class="day-labels">
+          <span>Mon</span>
+          <span></span>
+          <span>Wed</span>
+          <span></span>
+          <span>Fri</span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div id="heatmapGrid" class="heatmap-grid"></div>
+      </div>
+
+      <div class="heatmap-legend">
+        <span>Less</span>
+        <div class="legend-squares">
+          <span class="day-square level-0"></span>
+          <span class="day-square level-1"></span>
+          <span class="day-square level-2"></span>
+          <span class="day-square level-3"></span>
+          <span class="day-square level-4"></span>
+        </div>
+        <span>More</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/map.js"></script>
+</body>
+</html>
