@@ -610,11 +610,11 @@ body.auth-page {
 }
 
 /* Heat levels */
-.level-0 { background: #e6e9ee; }
-.level-1 { background: #b7df8a; }
-.level-2 { background: #7cc96b; }
-.level-3 { background: #33a852; }
-.level-4 { background: #1f6f3b; }
+.level-0 { background: #e6e9ee; }   /* no activity (neutral) */
+.level-1 { background: #f2c4b6; }   /* very light */
+.level-2 { background: #e89a82; }   /* light-medium */
+.level-3 { background: #dc6f54; }   /* medium */
+.level-4 { background: #C85A3A; }   /* strong (main brand colour) */
 
 /* Keep alignment but hide dates outside year */
 .outside-year {
