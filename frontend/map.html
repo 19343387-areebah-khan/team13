@@ -7,34 +7,32 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+
   <nav class="top-nav">
     <div class="nav-left">
-      <a href="home.html">Home</a>
-      <a href="account.html">Account</a>
-      <a href="map.html" class="active">Heatmap</a>
+      <a href="home.html" class="nav-link"> Home</a>
+      <a href="account.html" class="nav-link"> Account</a>
+      <a href="map.html" class="nav-link active"> Heatmap</a>
     </div>
-    <button id="logoutBtn" class="logout-btn">Log Out</button>
+    <button onclick="logout()" class="nav-logout-btn">Log Out</button>
   </nav>
 
   <main class="heatmap-page">
-    <section class="heatmap-header">
-      <h1>Year Activity Map</h1>
-      <p>Track your habit consistency across the year.</p>
-    </section>
+    <h1 class="page-title">Heatmap</h1>
 
-    <section class="heatmap-card">
+    <div class="heatmap-card">
       <div id="monthLabels" class="month-labels"></div>
 
       <div class="heatmap-wrapper">
         <div class="day-labels">
-          <span>Mon</span>
-          <span></span>
-          <span>Wed</span>
-          <span></span>
-          <span>Fri</span>
-          <span></span>
-          <span></span>
-        </div>
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+</div>
 
         <div id="heatmapGrid" class="heatmap-grid"></div>
       </div>
@@ -50,7 +48,7 @@
         </div>
         <span>More</span>
       </div>
-    </section>
+    </div>
   </main>
 
   <script src="js/map.js"></script>
