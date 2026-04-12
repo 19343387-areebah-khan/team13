@@ -166,8 +166,14 @@
 <body>
   
 
-  //taran: ADD NAV BAR here
-
+  <!-- T4.1 + T4.3: Navigation bar with links and logout button (Taran) -->
+<nav class="top-nav">
+  <div class="nav-links">
+    <a href="home.html" class="nav-link active"> Home</a>
+    <a href="account.html" class="nav-link"> Account</a>
+  </div>
+  <button onclick="logout()" class="nav-logout-btn">Log Out</button>
+</nav>
 
 
 
@@ -470,7 +476,11 @@ function deleteHabit(habit_id) {
 
 loadHabits();
 
-//taran: add js functions for nav bar here
+function logout() {
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.href = "login.html";
+}
 
 
   </script>

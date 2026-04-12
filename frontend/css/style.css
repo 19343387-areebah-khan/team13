@@ -420,6 +420,47 @@ body.auth-page {
   color: var(--text-medium);
 }
 
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto 20px auto;
+  padding: 12px 16px;
+  background-color: var(--white);
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
+  box-shadow: 0 2px 8px var(--shadow);
+}
+.nav-links { display: flex; gap: 16px; }
+.nav-link {
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-medium);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.nav-link:hover, .nav-link.active {
+  background-color: var(--bg-color);
+  color: var(--accent);
+}
+.nav-logout-btn {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #D97757, #C85A3A);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.nav-logout-btn:hover { opacity: 0.88; }
+
 /* Toast message */
 #toast {
   margin-top: 14px;
