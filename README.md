@@ -1,4 +1,6 @@
-How to Run the App
+## How to Run the App
+
+---
 
 Prerequisites: Python 3.10+
 
@@ -16,17 +18,17 @@ flask-cors
 
 werkzeug
 
-4.  Set up the database (first time only):
+3.  Set up the database (first time only):
 
 python database/setup_db.py
 
 Note: This reads habits.sql and creates the habit_tracker.db database file locally.
 
-6.  Run the Flask server:
+4.  Run the Flask server:
   
 python app.py
 
-8.  Open the app in a browser:
+5.  Open the app in a browser:
 
 http://localhost:5000
 
