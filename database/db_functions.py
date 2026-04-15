@@ -284,3 +284,32 @@ def get_heatmap_data(user_id):
         })
 
     return heatmap_data
+
+# T26.1 - Sprint 4 (Areebah)
+def get_weekly_notes(user_id):
+    """
+    Returns all habit log entries for the current week (Monday to Sunday)
+    for a given user. Only habits with a log entry this week are included.
+    Each entry contains: date, habit_name, status, note.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            hl.date,
+            h.name AS habit_name,
+            hl.status,
+            hl.note
+        FROM habit_logs hl
+        JOIN habits h ON hl.habit_id = h.habit_id
+        WHERE h.user_id = ?
+          AND hl.date >= DATE('now', 'weekday 1', '-7 days')
+          AND hl.date <= DATE('now', 'weekday 0')
+        ORDER BY hl.date ASC, h.name ASC
+    """, (user_id,))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return [dict(row) for row in rows]
