@@ -1,9 +1,21 @@
-Current Sprint: 3
+How to Run the App
+Prerequisites: Python 3.10+
 
-- Areebah US18 complete
-- Taran US4 complete
-- Benjy US12 complete
-- Hamza US14 in progress
+1.  Clone the repository:
+git clone https://github.com/19343387-areebah-khan/team13.git
+cd team13
 
-Not started:
-- stipan US15 
+2.  Install dependencies:
+pip install flask flask-cors werkzeug
+Note: The repo does not currently include a requirements.txt. The three packages above are all that is needed.
+
+3.  Set up the database (first time only):
+python database/setup_db.py
+Note: This reads habits.sql and creates the habit_tracker.db database file locally.
+
+4.  Run the Flask server:
+python app.py
+
+5.  Open the app in a browser:
+http://localhost:5000
+The login page will load automatically.
