@@ -644,3 +644,59 @@ body.auth-page {
   border-radius: 4px;
   display: inline-block;
 }
+
+/* T26.3: Notes This Week section (Areebah) */
+.notes-section {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.notes-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #2d2d2d;
+}
+
+.notes-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.notes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.notes-table th {
+  background-color: #c0603a;
+  color: white;
+  padding: 10px 14px;
+  text-align: left;
+}
+
+.notes-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0ece6;
+  color: #2d2d2d;
+}
+
+.notes-table tr:last-child td {
+  border-bottom: none;
+}
+
+.status-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-good { background-color: #d4edda; color: #2d6a3f; }
+.status-partial { background-color: #fff3cd; color: #856404; }
+.status-not_complete { background-color: #f8d7da; color: #842029; }

@@ -203,6 +203,21 @@ def api_get_heatmap():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
     
+    # T26.2: GET /weekly-notes — get weekly notes for a user (Areebah)
+@app.route('/weekly-notes', methods=['GET'])
+def api_get_weekly_notes():
+    user_id = request.args.get("user_id")
+
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required"}), 400
+
+    try:
+        from database.db_functions import get_weekly_notes
+        notes = get_weekly_notes(int(user_id))
+        return jsonify({"success": True, "notes": notes}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    
 # --------------------------------------
 # Run the app
 # --------------------------------------

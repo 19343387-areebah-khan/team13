@@ -179,4 +179,34 @@ if (logoutBtn) {
   });
 }
 
+// T26.4: Fetch and populate notes table (Areebah)
+async function loadWeeklyNotes() {
+  const userId = getStoredUserId();
+  if (!userId) return;
+
+  try {
+    const response = await fetch(`/weekly-notes?user_id=${encodeURIComponent(userId)}`);
+    const data = await response.json();
+    const tbody = document.getElementById("notesTableBody");
+
+    if (!data.success || data.notes.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4">No notes logged this week.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.notes.map(note => `
+      <tr>
+        <td>${note.date}</td>
+        <td>${note.habit_name}</td>
+        <td><span class="status-badge status-${note.status}">${note.status.replace("_", " ")}</span></td>
+        <td>${note.note || ""}</td>
+      </tr>
+    `).join("");
+  } catch (error) {
+    console.error("Error loading weekly notes:", error);
+  }
+}
+
 loadHeatmap();
+loadWeeklyNotes();
+
