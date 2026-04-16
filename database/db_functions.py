@@ -214,7 +214,23 @@ def log_habit_status(user_id, habit_id, status, note):
     conn.close()
     return True
 
+# T11.1 - Write update_habit() database function
+def update_habit(user_id, habit_id, name, habit_type):
+    from database.db_connections import get_connection
+    conn = get_connection()
+    cursor = conn.cursor()
 
+    cursor.execute("""
+        UPDATE habits
+        SET name = ?, habit_type = ?
+        WHERE habit_id = ? AND user_id = ?
+    """, (name, habit_type, habit_id, user_id))
+
+    conn.commit()
+    updated = cursor.rowcount  
+    conn.close()
+
+    return updated > 0
 
 
 
