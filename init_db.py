@@ -31,6 +31,15 @@ CREATE TABLE IF NOT EXISTS habit_logs (
 );
 """)
 
+# Seed test user for development purposes only
+from werkzeug.security import generate_password_hash
+
+test_password = generate_password_hash("Leoisacutecat890!")
+cursor.execute("""
+    INSERT OR IGNORE INTO users (username, email, password_hash, failed_attempts)
+    VALUES (?, ?, ?, 0)
+""", ("test", "test1@test.com", test_password))
+
 conn.commit()
 conn.close()
 print("Database initialised successfully.")
