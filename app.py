@@ -164,6 +164,38 @@ def api_habit_status():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
+@app.route("/habits/<int:habit_id>", methods=["PUT"])
+def api_update_habit(habit_id):
+    data = request.get_json()
+
+    user_id = data.get("user_id")
+    name = data.get("name", "").strip()
+    habit_type = data.get("habit_type", "").strip()
+
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required"})
+    if not name:
+        return jsonify({"success": False, "error": "Habit name is required"})
+    if not habit_type:
+        return jsonify({"success": False, "error": "Habit type is required"})
+
+    try:
+        from database.db_functions import update_habit
+
+        result = update_habit(int(user_id), habit_id, name, habit_type)
+
+        if result:
+            return jsonify({"success": True})
+        else:
+            return jsonify({
+                "success": False,
+                "error": "Habit not found or does not belong to user"
+            })
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
 
 @app.route("/habits", methods=["DELETE"])
 def api_delete_habit():
