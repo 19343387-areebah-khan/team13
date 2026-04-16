@@ -275,14 +275,40 @@
   </div>
 </div>
 
+<!-- T11.3 - Edit Habit Modal -->
+<div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:white; border-radius:12px; padding:20px; width:90%; max-width:400px;">
+    
+    <h3 style="margin-bottom:10px;">Edit Habit</h3>
+
+    <input id="edit-name" placeholder="Habit name" style="width:100%; margin-bottom:10px; padding:8px;">
+
+    <select id="edit-type" style="width:100%; margin-bottom:15px; padding:8px;">
+      <option value="health">Health</option>
+      <option value="fitness">Fitness</option>
+      <option value="mindfulness">Mindfulness</option>
+      <option value="learning">Learning</option>
+      <option value="other">Other</option>
+    </select>
+
+    <div style="display:flex; gap:10px;">
+      <button onclick="submitEditHabit()" style="flex:1;">Save</button>
+      <button onclick="closeEditModal()" style="flex:1;">Cancel</button>
+    </div>
+
+    <div id="edit-error" style="color:red; margin-top:10px;"></div>
+
+  </div>
+</div>
 
   <script>
 
    const USER_ID = sessionStorage.getItem("user_id") || localStorage.getItem("user_id") || 1;
 
-// T18.3, T18.4 - Modal state variables (Areebah Sprint 3)
+// T18.3, T18.4, T11.4 - Modal state variables (Areebah Sprint 3)
 let currentHabitId = null;
 let selectedStatus = null;
+let editHabitId = null;
 
 // T18.8 - Get visual state based on today_status (Areebah Sprint 3)
 function getTickDisplay(habit) {
@@ -328,6 +354,10 @@ async function loadHabits() {
           <div class="habit-type">${habit.habit_type}</div>
         </div>
       </div>
+      <button onclick="openEditModal(${habit.habit_id}, '${habit.name}', '${habit.habit_type}')"
+          style="background:#3498db; color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; margin-right:5px;">
+      Edit
+      </button>
       <button onclick="deleteHabit(${habit.habit_id})"
           style="background:#e74c3c; color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer;">
       Delete
@@ -359,6 +389,17 @@ function openStatusModal(habitId) {
   modal.style.display = 'flex';
 }
 
+// T11.4 
+function openEditModal(habitId, name, type) {
+  editHabitId = habitId;
+
+  document.getElementById("edit-name").value = name;
+  document.getElementById("edit-type").value = type;
+
+  document.getElementById("edit-error").textContent = "";
+  document.getElementById("edit-modal").style.display = "flex";
+}
+
 // T18.3 - Handle status option selection
 function selectStatus(status) {
   selectedStatus = status;
@@ -386,6 +427,12 @@ function cancelModal() {
   document.getElementById('status-modal').style.display = 'none';
   currentHabitId = null;
   selectedStatus = null;
+}
+
+// T11.4
+function closeEditModal() {
+  document.getElementById("edit-modal").style.display = "none";
+  editHabitId = null;
 }
 
 // T18.5 - Confirm status and send to backend
@@ -474,7 +521,43 @@ function deleteHabit(habit_id) {
   .catch(err => console.error("Error deleting habit:", err));
 }
 
+// T11.3
+async function submitEditHabit() {
+  const name = document.getElementById("edit-name").value.trim();
+  const habit_type = document.getElementById("edit-type").value;
 
+  if (!name) {
+    document.getElementById("edit-error").textContent = "Habit name is required";
+    return;
+  }
+
+  try {
+    const res = await fetch(`/habits/${editHabitId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: USER_ID,
+        name: name,
+        habit_type: habit_type
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      closeEditModal();
+      loadHabits();
+    } else {
+      document.getElementById("edit-error").textContent = data.error;
+    }
+
+  } catch (err) {
+    document.getElementById("edit-error").textContent = "Server error";
+  }
+}
+    
 loadHabits();
 
 function logout() {
