@@ -4,6 +4,10 @@ const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const successMessage = document.getElementById("success-message");
 
+function getUserId() {
+    return sessionStorage.getItem("user_id") || localStorage.getItem("user_id");
+}
+
 function getCurrentUser() {
     const savedUser = localStorage.getItem("currentUser");
 
@@ -15,11 +19,16 @@ function getCurrentUser() {
 }
 
 function loadUserDetails() {
-    const currentUser = getCurrentUser();
+    const userId = getUserId();
 
-    if (!currentUser) {
+    if (!userId) {
+        alert("No user is logged in.");
+        window.location.href = "login.html";
         return;
     }
+
+    const currentUser = getCurrentUser();
+
 
     if (currentUser.name) {
         nameInput.value = currentUser.name;
@@ -33,13 +42,15 @@ function loadUserDetails() {
 accountForm.addEventListener("submit", function(event) {
     event.preventDefault();
 
-    const currentUser = getCurrentUser();
+    const userId = getUserId();
 
-    if (!currentUser) {
+    if (!userId) {
         alert("No user is logged in.");
+        window.location.href = "login.html";
         return;
     }
 
+    const currentUser = getCurrentUser() || {};
     const name = nameInput.value.trim();
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
@@ -61,6 +72,7 @@ accountForm.addEventListener("submit", function(event) {
     
     const updatedUser = {
         ...currentUser,
+        user_id: userId,
         name: nameInput.value,
         email: emailInput.value,
         password: passwordInput.value
