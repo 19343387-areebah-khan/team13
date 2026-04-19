@@ -700,3 +700,24 @@ body.auth-page {
 .status-good { background-color: #d4edda; color: #2d6a3f; }
 .status-partial { background-color: #fff3cd; color: #856404; }
 .status-not_complete { background-color: #f8d7da; color: #842029; }
+
+
+/* T5.R1, AC5.1, AC5.2 - Account page restyle to match app design system - Hamza */
+.account-container {
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+
+.styled-account-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-success {
+  text-align: center;
+  margin-top: 16px;
+  color: #2e7d32;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+}

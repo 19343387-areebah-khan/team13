@@ -7,41 +7,57 @@
 <body>
 
 <!-- T4.1 + T4.3: Navigation bar with links and logout button (Taran) -->
+<!-- T5.R1, AC5.1, AC5.2: Restyled account page to match app design system (layout, fonts, colours) - Hamza -->
+
+
+
 <nav class="top-nav">
   <div class="nav-links">
-    <a href="home.html" class="nav-link">🏠 Home</a>
-    <a href="account.html" class="nav-link active">👤 Account</a>
+    <a href="home.html" class="nav-link">Home</a>
+    <a href="account.html" class="nav-link active">Account</a>
     <a href="map.html" class="nav-link">Heatmap</a>
   </div>
   <button onclick="logout()" class="nav-logout-btn">Log Out</button>
 </nav>
 
-    <h1>Account Settings</h1>
+<div class="logo-wrapper">
+  <div class="logo-icon">
+    <svg viewBox="0 0 24 24">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+  </div>
+  <h1 class="app-title">Bit by Bit</h1>
+  <p class="app-subtitle">Small Steps. Big Changes.</p>
+</div>
 
-    <form id="account-form">
-        <div>
-            <label for="name">Name</label>
-            <input type="text" id="name">
-        </div>
+<div class="container account-container">
+  <h1>Account Settings</h1>
 
-        <div>
-            <label for="email">Email</label>
-            <input type="email" id="email">
-        </div>
+  <form id="account-form" class="styled-account-form">
+    <div class="form-row">
+      <label for="name">Name</label>
+      <input type="text" id="name" placeholder="Enter your name">
+    </div>
 
-        <div>
-            <label for="password">New Password</label>
-            <input type="password" id="password">
-        </div>
+    <div class="form-row">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Enter your email">
+    </div>
 
-        <button type="submit">Save Changes</button>
-    </form>
+    <div class="form-row">
+      <label for="password">New Password</label>
+      <input type="password" id="password" placeholder="Enter a new password">
+    </div>
 
-    <p id="success-message" style="display:none;">Details updated successfully.</p>
+    <button type="submit" class="btn-primary">Save Changes</button>
+  </form>
 
-    <script src="./js/account.js"></script>
+  <p id="success-message" class="account-success" style="display:none;">Details updated successfully.</p>
+</div>
 
- <script>
+<script src="./js/account.js"></script>
+
+<script>
   function logout() {
     localStorage.clear();
     sessionStorage.clear();
