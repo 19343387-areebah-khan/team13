@@ -207,6 +207,50 @@ async function loadWeeklyNotes() {
   }
 }
 
+
+// new 
+async function loadWeeklySummary() {
+  const userId = getStoredUserId();
+
+  if (!userId) {
+    console.log("No user ID found");
+    return;
+  }
+
+  try {
+    const response = await fetch(`/weekly-summary?user_id=${userId}`);
+    const data = await response.json();
+
+    if (!data.success) {
+      console.error("Weekly summary error:", data.error);
+      return;
+    }
+
+    const container = document.getElementById("weeklySummaryGrid");
+    container.innerHTML = "";
+
+    data.summary.forEach(day => {
+      const div = document.createElement("div");
+
+      const hasData = day.completed > 0;
+
+      div.className = "week-day-card " + (hasData ? "completed" : "empty");
+
+      div.innerHTML = `
+        <div><strong>${day.day}</strong></div>
+        <div>${day.completed} / ${day.total}</div>
+        <div>${day.percent}%</div>
+      `;
+
+      container.appendChild(div);
+    });
+
+  } catch (error) {
+    console.error("Failed to load weekly summary:", error);
+  }
+}
+
 loadHeatmap();
+loadWeeklySummary();
 loadWeeklyNotes();
 
