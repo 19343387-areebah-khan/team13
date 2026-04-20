@@ -320,8 +320,8 @@ def get_weekly_notes(user_id):
         FROM habit_logs hl
         JOIN habits h ON hl.habit_id = h.habit_id
         WHERE h.user_id = ?
-          AND hl.date >= DATE('now', 'weekday 1', '-7 days')
-          AND hl.date <= DATE('now', 'weekday 0')
+          AND hl.date >= DATE('now', 'weekday 1', '-6 days')
+          AND hl.date <= DATE('now')
         ORDER BY hl.date ASC, h.name ASC
     """, (user_id,))
 
