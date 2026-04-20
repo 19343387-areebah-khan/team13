@@ -250,6 +250,26 @@ def api_get_weekly_notes():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
     
+##T16.4 weekly-summary
+@app.route('/weekly-summary', methods=['GET'])
+def api_weekly_summary():
+    user_id = request.args.get("user_id")
+
+    if not user_id:
+        return jsonify({"success": False, "error": "User ID is required"}), 400
+
+    try:
+        from database.db_functions import get_weekly_summary
+        data = get_weekly_summary(int(user_id))
+
+        return jsonify({
+            "success": True,
+            "summary": data
+        })
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 # --------------------------------------
 # Run the app
 # --------------------------------------

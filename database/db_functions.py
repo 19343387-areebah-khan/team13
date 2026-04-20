@@ -2,6 +2,7 @@ import sqlite3
 from database.db_connections import get_connection
 from utils.security_utils import sanitize_input, hash_password, compare_password
 from utils.security_utils import validate_username, validate_email, validate_password
+from database.db_connections import get_connection
 
 
 def add_user(username, email, password_hash):
@@ -329,3 +330,92 @@ def get_weekly_notes(user_id):
     conn.close()
 
     return [dict(row) for row in rows]
+
+##New weekly summery functon
+
+def get_weekly_summary(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    #get all habits for user (needed for totals)
+    cursor.execute("""
+        SELECT habit_id
+        FROM habits
+        WHERE user_id = ?
+    """, (user_id,))
+    habits = cursor.fetchall()
+
+    total_habits = len(habits)
+
+    # Step 2: build Monday → Sunday range (SQLite week)
+    cursor.execute("SELECT date('now', 'weekday 1', '-7 days')")
+    monday = cursor.fetchone()[0]
+
+    cursor.execute("SELECT date('now', 'weekday 0')")
+    sunday = cursor.fetchone()[0]
+
+    #get logs grouped by date
+    cursor.execute("""
+        SELECT 
+            hl.date,
+            COUNT(CASE WHEN hl.status = 'complete' THEN 1 END) as completed
+        FROM habit_logs hl
+        JOIN habits h ON h.habit_id = hl.habit_id
+        WHERE h.user_id = ?
+          AND hl.date BETWEEN ? AND ?
+        GROUP BY hl.date
+    """, (user_id, monday, sunday))
+
+    rows = cursor.fetchall()
+
+    # Step 4: map results
+    data_map = {}
+    for r in rows:
+        date = r["date"]
+        completed = r["completed"] or 0
+
+        data_map[date] = {
+            "completed": completed,
+            "total": total_habits,
+            "percent": round((completed / total_habits) * 100, 1) if total_habits else 0
+        }
+
+    # return 7 days (AC16.4 requirement)
+    cursor.execute("""
+        SELECT date('now', 'weekday 1', '-7 days')
+    """)
+    start = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT date('now', 'weekday 1', '+6 days', '-7 days')
+    """)
+
+    from datetime import datetime, timedelta
+
+    start_date = datetime.strptime(start, "%Y-%m-%d")
+
+    result = []
+
+    for i in range(7):
+        day = start_date + timedelta(days=i)
+        date_str = day.strftime("%Y-%m-%d")
+
+        if date_str in data_map:
+            result.append({
+                "day": day.strftime("%A"),
+                "date": date_str,
+                "completed": data_map[date_str]["completed"],
+                "total": total_habits,
+                "percent": data_map[date_str]["percent"]
+            })
+        else:
+            result.append({
+                "day": day.strftime("%A"),
+                "date": date_str,
+                "completed": 0,
+                "total": total_habits,
+                "percent": 0
+            })
+
+    conn.close()
+    return result
