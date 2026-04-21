@@ -340,7 +340,10 @@
 
   <script>
 
-   const USER_ID = sessionStorage.getItem("user_id") || localStorage.getItem("user_id") || 1;
+   const USER_ID = sessionStorage.getItem("user_id") || localStorage.getItem("user_id");
+if (!USER_ID) {
+  window.location.href = "login.html";
+}
 
 // T18.3, T18.4, T11.4 - Modal state variables (Areebah Sprint 3)
 let currentHabitId = null;
