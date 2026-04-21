@@ -517,11 +517,12 @@ document.getElementById("habit-form").addEventListener("submit", async function(
 
   const name = document.getElementById("habit-name").value.trim();
   const habit_type = document.getElementById("habit-type").value;
+  const frequency = document.getElementById("frequency").value;
 
   const res = await fetch("/habits", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: USER_ID, name, habit_type })
+    body: JSON.stringify({ user_id: USER_ID, name, habit_type, frequency })
   });
 
   const data = await res.json();
