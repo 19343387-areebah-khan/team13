@@ -364,7 +364,7 @@ function getTickDisplay(habit) {
 }
 
 async function loadHabits() {
-  const res = await fetch(`/habits?user_id=${USER_ID}`);
+  const res = await fetch(`/habits?user_id=${USER_ID}`, { cache: 'no-store' });
   const data = await res.json();
 
   const list = document.getElementById("habit-list");
@@ -506,7 +506,7 @@ async function confirmStatus() {
       document.getElementById('status-modal').style.display = 'none';
       currentHabitId = null;
       selectedStatus = null;
-      loadHabits();
+      setTimeout(() => loadHabits(), 100);
     } else {
       document.getElementById('modal-error').style.display = 'block';
       document.getElementById('modal-error').textContent = data.error || 'Something went wrong. Please try again.';

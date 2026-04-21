@@ -123,7 +123,7 @@ def get_habits_by_user_id(user_id):
         FROM habits h
         LEFT JOIN habit_logs hl
             ON h.habit_id = hl.habit_id
-            AND hl.date = DATE('now')
+            AND hl.date = DATE('now', '+1 day')
         WHERE h.user_id = ?
         ORDER BY h.created_at DESC, h.habit_id DESC
         """,
@@ -323,7 +323,7 @@ def get_weekly_notes(user_id):
         JOIN habits h ON hl.habit_id = h.habit_id
         WHERE h.user_id = ?
           AND hl.date >= DATE('now', 'weekday 1', '-6 days')
-          AND hl.date <= DATE('now')
+          AND hl.date <= DATE('now', '+1 day')
         ORDER BY hl.date ASC, h.name ASC
     """, (user_id,))
 
