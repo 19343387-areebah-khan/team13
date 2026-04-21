@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Progress | Bit by Bit</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      font-family: 'Jost', sans-serif;
+      background: #f5f0e8;
+      margin: 0;
+      padding: 0;
+      color: #2b160b;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: white;
+      border-bottom: 1px solid #eadfce;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: #8a5a3c;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: #f3e4d6;
+      color: #2b160b;
+    }
+
+    .nav-logout-btn {
+      background: #d97757;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .nav-logout-btn:hover {
+      background: #c85a3a;
+    }
+
+    .page-wrap {
+      max-width: 960px;
+      margin: 24px auto 48px;
+      padding: 0 16px;
+    }
+
+    .hero-card,
+    .summary-card,
+    .day-card,
+    .empty-card,
+    .loading-card,
+    .error-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .hero-card {
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .page-kicker {
+      color: #8a5a3c;
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .page-title {
+      margin: 0 0 10px;
+      font-size: 32px;
+      line-height: 1.1;
+    }
+
+    .page-subtitle {
+      margin: 0;
+      font-size: 16px;
+      color: #6a5345;
+    }
+
+    .summary-card {
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .summary-stat {
+      background: #fbf7f2;
+      border: 1px solid #f0e4d8;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .summary-stat-label {
+      font-size: 13px;
+      color: #8a5a3c;
+      margin-bottom: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .summary-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2b160b;
+    }
+
+    .summary-note {
+      margin-top: 16px;
+      color: #6a5345;
+      font-size: 15px;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .day-card {
+      padding: 18px;
+      border: 1px solid #f0e4d8;
+    }
+
+    .day-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .day-name {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .day-date {
+      margin: 4px 0 0;
+      color: #8a5a3c;
+      font-size: 14px;
+    }
+
+    .day-badge {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .badge-strong {
+      background: #dff4e4;
+      color: #1f6b36;
+    }
+
+    .badge-steady {
+      background: #fff2d8;
+      color: #8a5a00;
+    }
+
+    .badge-low {
+      background: #fde5e1;
+      color: #9d3d2d;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      color: #6a5345;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: #f1e5d7;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    .fill-strong { background: linear-gradient(90deg, #4caf50, #78c57b); }
+    .fill-steady { background: linear-gradient(90deg, #e8b04b, #f0c96e); }
+    .fill-low { background: linear-gradient(90deg, #d97757, #e79b84); }
+
+    .day-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      color: #6a5345;
+    }
+
+    .loading-card,
+    .error-card,
+    .empty-card {
+      padding: 24px;
+      margin-top: 18px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 640px) {
+      .top-nav {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .nav-links {
+        justify-content: center;
+      }
+
+      .nav-logout-btn {
+        width: 100%;
+      }
+
+      .day-top,
+      .day-meta {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="nav-links">
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="account.html" class="nav-link">Account</a>
+      <a href="map.html" class="nav-link">Heatmap</a>
+      <a href="progress.html" class="nav-link active">Progress</a>
+    </div>
+    <button onclick="logout()" class="nav-logout-btn">Log Out</button>
+  </nav>
+
+  <main class="page-wrap">
+    <section class="hero-card">
+      <p class="page-kicker">Weekly Summary</p>
+      <h1 class="page-title">Track your week at a glance</h1>
+      <p class="page-subtitle">
+        See how many habits you completed each day and spot patterns in your routine.
+      </p>
+    </section>
+
+    <section class="summary-card hidden" id="summary-overview">
+      <h2 style="margin-top: 0;">This Week's Overview</h2>
+      <div class="summary-grid">
+        <div class="summary-stat">
+          <div class="summary-stat-label">Weekly Completion</div>
+          <div class="summary-stat-value" id="weekly-percent">0%</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-stat-label">Habits Completed</div>
+          <div class="summary-stat-value" id="completed-total">0</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-stat-label">Total Opportunities</div>
+          <div class="summary-stat-value" id="possible-total">0</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-stat-label">Best Day</div>
+          <div class="summary-stat-value" id="best-day">-</div>
+        </div>
+      </div>
+      <p class="summary-note" id="summary-note"></p>
+    </section>
+
+    <section class="loading-card" id="loading-state">
+      Loading weekly summary...
+    </section>
+
+    <section class="error-card hidden" id="error-state">
+      We could not load your weekly summary right now.
+    </section>
+
+    <section class="empty-card hidden" id="empty-state">
+      You do not have any habits yet, so there is no weekly summary to show.
+    </section>
+
+    <section class="days-grid hidden" id="days-grid"></section>
+  </main>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('user');
+      localStorage.removeItem('user_id');
+      localStorage.removeItem('currentUser');
+      window.location.href = 'login.html';
+    }
+
+    function getStoredUserId() {
+      const directUserId = localStorage.getItem('user_id');
+      if (directUserId) return directUserId;
+
+      const possibleObjects = ['user', 'currentUser'];
+
+      for (const key of possibleObjects) {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && (parsed.user_id || parsed.id)) {
+            return parsed.user_id || parsed.id;
+          }
+        } catch (error) {
+          // ignore parse errors and keep checking
+        }
+      }
+
+      return null;
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString + 'T00:00:00');
+      return date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short'
+      });
+    }
+
+    function getPerformanceLevel(percent) {
+      if (percent >= 80) {
+        return {
+          badgeClass: 'badge-strong',
+          fillClass: 'fill-strong',
+          label: 'Strong'
+        };
+      }
+
+      if (percent >= 40) {
+        return {
+          badgeClass: 'badge-steady',
+          fillClass: 'fill-steady',
+          label: 'Steady'
+        };
+      }
+
+      return {
+        badgeClass: 'badge-low',
+        fillClass: 'fill-low',
+        label: 'Needs Focus'
+      };
+    }
+
+    function showState(stateId) {
+      document.getElementById('loading-state').classList.add('hidden');
+      document.getElementById('error-state').classList.add('hidden');
+      document.getElementById('empty-state').classList.add('hidden');
+      document.getElementById('summary-overview').classList.add('hidden');
+      document.getElementById('days-grid').classList.add('hidden');
+
+      document.getElementById(stateId).classList.remove('hidden');
+    }
+
+    function calculateWeeklyStats(summary) {
+      const completedTotal = summary.reduce((sum, day) => sum + (day.completed || 0), 0);
+      const possibleTotal = summary.reduce((sum, day) => sum + (day.total || 0), 0);
+      const weeklyPercent = possibleTotal > 0 ? ((completedTotal / possibleTotal) * 100).toFixed(1) : '0.0';
+
+      let bestDay = null;
+      summary.forEach(day => {
+        if (!bestDay || (day.percent || 0) > (bestDay.percent || 0)) {
+          bestDay = day;
+        }
+      });
+
+      return {
+        completedTotal,
+        possibleTotal,
+        weeklyPercent,
+        bestDay
+      };
+    }
+
+    function renderOverview(summary) {
+      const stats = calculateWeeklyStats(summary);
+
+      document.getElementById('weekly-percent').textContent = `${stats.weeklyPercent}%`;
+      document.getElementById('completed-total').textContent = stats.completedTotal;
+      document.getElementById('possible-total').textContent = stats.possibleTotal;
+      document.getElementById('best-day').textContent = stats.bestDay ? stats.bestDay.day : '-';
+
+      let note = 'Keep going — every completed habit adds up across the week.';
+      const weeklyPercent = parseFloat(stats.weeklyPercent);
+
+      if (weeklyPercent >= 80) {
+        note = 'Excellent consistency this week. You kept strong momentum.';
+      } else if (weeklyPercent >= 40) {
+        note = 'Good progress this week. A little extra consistency could raise your score.';
+      } else if (stats.possibleTotal === 0) {
+        note = 'Create some habits to start seeing a weekly summary.';
+      } else {
+        note = 'This week was lighter, but your summary shows where you can improve next.';
+      }
+
+      document.getElementById('summary-note').textContent = note;
+      document.getElementById('summary-overview').classList.remove('hidden');
+    }
+
+    function renderSummary(summary) {
+      const daysGrid = document.getElementById('days-grid');
+      daysGrid.innerHTML = '';
+
+      summary.forEach(day => {
+        const level = getPerformanceLevel(day.percent || 0);
+
+        const card = document.createElement('article');
+        card.className = 'day-card';
+        card.innerHTML = `
+          <div class="day-top">
+            <div>
+              <h3 class="day-name">${day.day}</h3>
+              <p class="day-date">${formatDate(day.date)}</p>
+            </div>
+            <span class="day-badge ${level.badgeClass}">${level.label}</span>
+          </div>
+          <div class="progress-row">
+            <span>Daily completion</span>
+            <span>${day.percent}%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill ${level.fillClass}" style="width: ${Math.min(day.percent || 0, 100)}%"></div>
+          </div>
+          <div class="day-meta">
+            <span><strong>${day.completed}</strong> completed</span>
+            <span><strong>${day.total}</strong> total habits</span>
+          </div>
+        `;
+        daysGrid.appendChild(card);
+      });
+
+      daysGrid.classList.remove('hidden');
+    }
+
+    async function loadWeeklySummary() {
+      const userId = getStoredUserId();
+
+      if (!userId) {
+        document.getElementById('error-state').textContent = 'No user session found. Please log in again.';
+        showState('error-state');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/weekly-summary?user_id=${encodeURIComponent(userId)}`);
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'Failed to fetch weekly summary');
+        }
+
+        const summary = Array.isArray(result.summary) ? result.summary : [];
+
+        if (summary.length === 0) {
+          showState('empty-state');
+          return;
+        }
+
+        const hasAnyHabits = summary.some(day => (day.total || 0) > 0);
+        if (!hasAnyHabits) {
+          showState('empty-state');
+          return;
+        }
+
+        document.getElementById('loading-state').classList.add('hidden');
+        renderOverview(summary);
+        renderSummary(summary);
+      } catch (error) {
+        console.error('Weekly summary error:', error);
+        document.getElementById('error-state').textContent = error.message || 'We could not load your weekly summary right now.';
+        showState('error-state');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadWeeklySummary);
+  </script>
+</body>
+</html>
