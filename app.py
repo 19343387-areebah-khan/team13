@@ -73,7 +73,7 @@ def api_create_habit():
     valid_frequencies = ["daily", "weekly"]
 
     if frequency not in valid_frequencies:
-        return jsonify({"success": False, "error": "Invalid frequency")}
+        return jsonify({"success": False, "error": "Invalid frequency"})
 
     # save to database
     # TODO: REPLACE W STIPAN add_habit(user_id, name, habit_type) from db_functions.py (T6.7)
@@ -83,9 +83,9 @@ def api_create_habit():
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO habits (user_id, name, habit_type) VALUES (?, ?, ?)",
-            (user_id, name, habit_type)
-        )
+    "INSERT INTO habits (user_id, name, habit_type, frequency) VALUES (?, ?, ?, ?)",
+    (user_id, name, habit_type, frequency)
+    )
         conn.commit()
         habit_id = cursor.lastrowid
         conn.close()

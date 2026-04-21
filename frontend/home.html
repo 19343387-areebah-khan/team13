@@ -388,17 +388,19 @@ async function loadHabits() {
         </div>
         <div>
           <div class="habit-name">${habit.name}</div>
-          <div class="habit-type">${habit.habit_type}</div>
+          <div class="habit-type">${habit.habit_type} · ${habit.frequency || 'daily'}</div>
         </div>
       </div>
-      <button onclick="openEditModal(${habit.habit_id}, '${habit.name}', '${habit.habit_type}')"
-          style="background:#3498db; color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; margin-right:5px;">
-      Edit
-      </button>
-      <button onclick="openDeleteModal(${habit.habit_id})"
-          style="background:#e74c3c; color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer;">
-      Delete
-      </button>
+      <div style="display:flex; gap:8px;">
+        <button onclick="openEditModal(${habit.habit_id}, '${habit.name}', '${habit.habit_type}')"
+            style="background:transparent; color:#D97757; border:2px solid #D97757; padding:6px 12px; border-radius:6px; cursor:pointer; font-family:'Jost',sans-serif; font-size:13px;">
+          Edit
+        </button>
+        <button onclick="openDeleteModal(${habit.habit_id})"
+            style="background:transparent; color:#999; border:2px solid #ddd; padding:6px 12px; border-radius:6px; cursor:pointer; font-family:'Jost',sans-serif; font-size:13px;">
+          Delete
+        </button>
+      </div>
     `;
 
     list.appendChild(item);

@@ -107,13 +107,14 @@ def add_habit(user_id, name, habyt_type="other"):
 def get_habits_by_user_id(user_id):
     conn = get_connection()
     cursor = conn.cursor()
-
+    
     cursor.execute(
         """
         SELECT
             h.habit_id,
             h.name,
             h.habit_type,
+            h.frequency,
             CASE
                 WHEN hl.log_id IS NOT NULL AND hl.status = 'complete' THEN 1
                 ELSE 0
@@ -358,7 +359,7 @@ def get_weekly_summary(user_id):
     cursor.execute("""
         SELECT 
             hl.date,
-            COUNT(CASE WHEN hl.status = 'complete' THEN 1 END) as completed
+            COUNT(CASE WHEN hl.status IN ('good', 'partial') THEN 1 END) as completed
         FROM habit_logs hl
         JOIN habits h ON h.habit_id = hl.habit_id
         WHERE h.user_id = ?

@@ -17,10 +17,11 @@ CREATE TABLE IF NOT EXISTS habits (
     user_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     habit_type TEXT DEFAULT 'other',
+    frequency TEXT DEFAULT 'daily',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
-
+                     
 CREATE TABLE IF NOT EXISTS habit_logs (
     log_id INTEGER PRIMARY KEY AUTOINCREMENT,
     habit_id INTEGER NOT NULL,
