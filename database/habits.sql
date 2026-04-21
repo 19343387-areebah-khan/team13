@@ -20,6 +20,7 @@ CREATE TABLE habits (
     group_id INTEGER,
     name TEXT NOT NULL,
     habit_type TEXT NOT NULL,
+    frequency TEXT DEFAULT 'daily',
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (group_id) REFERENCES groups(group_id)
