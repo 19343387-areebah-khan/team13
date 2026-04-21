@@ -55,6 +55,7 @@ def api_create_habit():
     user_id = data.get("user_id")
     name = data.get("name", "").strip()
     habit_type = data.get("habit_type", "").strip()
+    frequency = data.get("frequency", "daily").strip()
 
     # validate: user_id must exist
     if not user_id:
@@ -67,6 +68,12 @@ def api_create_habit():
     # validate: habit type cannot be empty
     if not habit_type:
         return jsonify({"success": False, "error": "Habit type is required"})
+
+    # validate: frequency must be a valid frequency
+    valid_frequencies = ["daily", "weekly"]
+
+    if frequency not in valid_frequencies:
+        return jsonify({"success": False, "error": "Invalid frequency")}
 
     # save to database
     # TODO: REPLACE W STIPAN add_habit(user_id, name, habit_type) from db_functions.py (T6.7)
