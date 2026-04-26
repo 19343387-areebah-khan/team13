@@ -123,7 +123,7 @@ def get_habits_by_user_id(user_id):
         FROM habits h
         LEFT JOIN habit_logs hl
             ON h.habit_id = hl.habit_id
-            AND hl.date = DATE('now', '+1 day')
+            AND hl.date = DATE('now')
         WHERE h.user_id = ?
         ORDER BY h.created_at DESC, h.habit_id DESC
         """,

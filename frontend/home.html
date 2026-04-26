@@ -345,12 +345,11 @@ if (!USER_ID) {
   window.location.href = "login.html";
 }
 
-// T18.3, T18.4, T11.4 - Modal state variables (Areebah Sprint 3)
 let currentHabitId = null;
 let selectedStatus = null;
 let editHabitId = null;
 let deleteHabitId = null;
-// T18.8 - Get visual state based on today_status (Areebah Sprint 3)
+
 function getTickDisplay(habit) {
   if (habit.today_status === 'good') {
     return { classes: 'habit-check done good', text: '✓', color: '#D97757' };
@@ -367,6 +366,8 @@ async function loadHabits() {
   const res = await fetch(`/habits?user_id=${USER_ID}`, { cache: 'no-store' });
   const data = await res.json();
 
+  console.log("HABITS DATA:", data.habits);
+
   const list = document.getElementById("habit-list");
   list.innerHTML = "";
 
@@ -375,7 +376,6 @@ async function loadHabits() {
     return;
   }
 
-  // T18.8 - render habits with status-based visual state
   data.habits.forEach(habit => {
     const tick = getTickDisplay(habit);
     const item = document.createElement("div");
@@ -410,12 +410,10 @@ async function loadHabits() {
   });
 }
 
-// T18.4 - Intercept tick click, open modal instead of calling complete directly
 function openStatusModal(habitId) {
   currentHabitId = habitId;
   selectedStatus = null;
 
-  // reset modal state
   document.getElementById('btn-good').style.borderColor = '#ddd';
   document.getElementById('btn-good').style.background = 'white';
   document.getElementById('btn-partial').style.borderColor = '#ddd';
@@ -426,27 +424,20 @@ function openStatusModal(habitId) {
   document.getElementById('habit-note').value = '';
   document.getElementById('modal-error').style.display = 'none';
 
-  // show modal
-  const modal = document.getElementById('status-modal');
-  modal.style.display = 'flex';
+  document.getElementById('status-modal').style.display = 'flex';
 }
 
-// T11.4 
 function openEditModal(habitId, name, type) {
   editHabitId = habitId;
-
   document.getElementById("edit-name").value = name;
   document.getElementById("edit-type").value = type;
-
   document.getElementById("edit-error").textContent = "";
   document.getElementById("edit-modal").style.display = "flex";
 }
 
-// T18.3 - Handle status option selection
 function selectStatus(status) {
   selectedStatus = status;
 
-  // reset all button styles
   document.getElementById('btn-good').style.borderColor = '#ddd';
   document.getElementById('btn-good').style.background = 'white';
   document.getElementById('btn-partial').style.borderColor = '#ddd';
@@ -454,24 +445,20 @@ function selectStatus(status) {
   document.getElementById('btn-not-complete').style.borderColor = '#ddd';
   document.getElementById('btn-not-complete').style.background = 'white';
 
-  // highlight selected button
   const btnMap = { good: 'btn-good', partial: 'btn-partial', not_complete: 'btn-not-complete' };
   const selectedBtn = document.getElementById(btnMap[status]);
   selectedBtn.style.borderColor = '#D97757';
   selectedBtn.style.background = '#FDF5F0';
 
-  // show note textarea only for not_complete
   document.getElementById('note-section').style.display = status === 'not_complete' ? 'block' : 'none';
 }
 
-// T18.3 - Cancel modal with no action
 function cancelModal() {
   document.getElementById('status-modal').style.display = 'none';
   currentHabitId = null;
   selectedStatus = null;
 }
 
-// T11.4
 function closeEditModal() {
   document.getElementById("edit-modal").style.display = "none";
   editHabitId = null;
@@ -502,11 +489,38 @@ async function confirmStatus() {
     const data = await res.json();
 
     if (data.success) {
-      // close modal and reload habits to reflect new visual state
       document.getElementById('status-modal').style.display = 'none';
+
+      const habitItem = document.getElementById(`habit-${currentHabitId}`);
+      if (habitItem) {
+        const tick = habitItem.querySelector('.habit-check');
+        if (selectedStatus === 'good') {
+          tick.className = 'habit-check done good';
+          tick.style.background = '#D97757';
+          tick.style.borderColor = '#D97757';
+          tick.style.color = 'white';
+          tick.textContent = '✓';
+          habitItem.classList.add('completed');
+        } else if (selectedStatus === 'partial') {
+          tick.className = 'habit-check done partial';
+          tick.style.background = '#F5A97F';
+          tick.style.borderColor = '#F5A97F';
+          tick.style.color = 'white';
+          tick.textContent = '✓';
+          habitItem.classList.add('completed');
+        } else if (selectedStatus === 'not_complete') {
+          tick.className = 'habit-check not-complete';
+          tick.style.background = '#999';
+          tick.style.borderColor = '#999';
+          tick.style.color = 'white';
+          tick.textContent = '✗';
+        }
+      }
+
       currentHabitId = null;
       selectedStatus = null;
-      setTimeout(() => loadHabits(), 100);
+      loadHabits();
+
     } else {
       document.getElementById('modal-error').style.display = 'block';
       document.getElementById('modal-error').textContent = data.error || 'Something went wrong. Please try again.';
@@ -541,7 +555,6 @@ document.getElementById("habit-form").addEventListener("submit", async function(
   }
 });
 
-// T31.1, T31.2, T31.3 - Handles delete confirmation modal: opens modal, cancels deletion, and confirms deletion via API - Hamza
 function openDeleteModal(habitId) {
   deleteHabitId = habitId;
   document.getElementById("delete-error").style.display = "none";
@@ -566,13 +579,8 @@ async function confirmDeleteHabit() {
   try {
     const res = await fetch("/habits", {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        user_id: USER_ID,
-        habit_id: deleteHabitId
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: USER_ID, habit_id: deleteHabitId })
     });
 
     const data = await res.json();
@@ -591,9 +599,6 @@ async function confirmDeleteHabit() {
   }
 }
 
-
-
-// T11.3
 async function submitEditHabit() {
   const name = document.getElementById("edit-name").value.trim();
   const habit_type = document.getElementById("edit-type").value;
@@ -606,14 +611,8 @@ async function submitEditHabit() {
   try {
     const res = await fetch(`/habits/${editHabitId}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        user_id: USER_ID,
-        name: name,
-        habit_type: habit_type
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: USER_ID, name: name, habit_type: habit_type })
     });
 
     const data = await res.json();
@@ -624,12 +623,11 @@ async function submitEditHabit() {
     } else {
       document.getElementById("edit-error").textContent = data.error;
     }
-
   } catch (err) {
     document.getElementById("edit-error").textContent = "Server error";
   }
 }
-    
+
 loadHabits();
 
 function logout() {
